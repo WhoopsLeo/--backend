@@ -1,15 +1,12 @@
-package com.lx.service.impl;
+package com.xwj.service.impl;
 
-import com.lx.mapper.PollutionMapper;
-import com.lx.pojo.Pollution;
-import com.lx.service.PollutionService;
-import com.lx.util.CountUtils;
-import com.lx.util.PollutionUtils;
-import com.lx.vo.Geo;
-import com.lx.vo.PollutionDTO;
+import com.xwj.mapper.PollutionMapper;
+import com.xwj.pojo.Pollution;
+import com.xwj.service.PollutionService;
+import com.xwj.util.CountUtils;
+import com.xwj.util.PollutionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;

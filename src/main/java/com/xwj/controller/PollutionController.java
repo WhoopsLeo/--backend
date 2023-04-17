@@ -1,15 +1,11 @@
-package com.lx.controller;
+package com.xwj.controller;
 
 
-import com.lx.common.R;
-import com.lx.pojo.Pollution;
-import com.lx.service.PollutionService;
-import com.lx.vo.PollutionDTO;
+import com.xwj.common.R;
+import com.xwj.service.PollutionService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

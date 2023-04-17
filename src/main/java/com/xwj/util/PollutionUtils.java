@@ -1,6 +1,6 @@
-package com.lx.util;
+package com.xwj.util;
 
-import com.lx.pojo.Pollution;
+import com.xwj.pojo.Pollution;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

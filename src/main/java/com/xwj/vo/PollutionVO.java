@@ -1,10 +1,9 @@
-package com.lx.vo;
+package com.xwj.vo;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.lang.reflect.Array;
 import java.util.List;
 import java.util.Map;
 

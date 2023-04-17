@@ -1,4 +1,4 @@
-package com.lx.config;
+package com.xwj.config;
 
 
 import org.springframework.context.annotation.Configuration;

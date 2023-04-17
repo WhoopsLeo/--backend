@@ -1,4 +1,4 @@
-package com.lx.common;
+package com.xwj.common;
 
 
 import java.io.Serializable;

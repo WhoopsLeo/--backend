@@ -1,4 +1,4 @@
-package com.lx.vo;
+package com.xwj.vo;
 
 import lombok.Data;
 

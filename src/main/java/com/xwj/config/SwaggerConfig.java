@@ -1,4 +1,4 @@
-package com.lx.config;
+package com.xwj.config;
 
 import com.github.xiaoymin.knife4j.spring.annotations.EnableKnife4j;
 import org.springframework.context.annotation.Bean;
@@ -24,7 +24,7 @@ public class SwaggerConfig {
                 .useDefaultResponseMessages(false)
                 .apiInfo(apiInfo())
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("com.lx.controller"))
+                .apis(RequestHandlerSelectors.basePackage("com.xwj.controller"))
                 .paths(PathSelectors.any())
                 .build();
     }
@@ -33,7 +33,7 @@ public class SwaggerConfig {
         return new ApiInfoBuilder()
                 .title("big-data-admin")
                 .description("服务相关接口")
-                .contact(new Contact("lx",null,"2539417782@qq.con"))
+                .contact(new Contact("xwj",null,"1021790855@qq.con"))
                 .version("1.0")
                 .build();
     }

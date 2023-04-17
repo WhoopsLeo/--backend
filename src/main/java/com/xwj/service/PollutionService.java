@@ -1,6 +1,4 @@
-package com.lx.service;
-
-import com.lx.vo.PollutionDTO;
+package com.xwj.service;
 
 import java.util.List;
 import java.util.Map;
