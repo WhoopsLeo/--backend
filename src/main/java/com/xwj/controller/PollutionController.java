@@ -44,52 +44,7 @@ public class PollutionController {
         return R.ok(cityInfoByProvince);
     }
 
-    @GetMapping("get_some_average")
-    @ApiOperation("获取近六年省份污染物平均值")
-    public R getSomeAvgCount(){
-        Map<String,Object> countMap  = pollutionService.getSomeAvgCount();
-        return R.ok(countMap);
-    }
 
-    @GetMapping("get_some_city_average/{name}")
-    @ApiOperation("获取目标年城市污染物平均值")
-    public R getSomeCityAvgCount(@PathVariable String name){
-        Map<String,Object> countMap  = pollutionService.getSomeCityAvgCount(name);
-        return R.ok(countMap);
-    }
-
-    // 获取每年AQI前十名省份，其他污染物按照aqi城市顺序返回
-    @GetMapping("get_ten_aqi_asc")
-    @ApiOperation("获取近六年的前十个省的污染物数据")
-    public R getTenProvinceAsc(){
-        List<Map<String,Object>> map = pollutionService.getTenProvinceAsc();
-        return R.ok(map);
-    }
-
-
-    // 获取六年污染物平均值
-    @GetMapping("get_six_average")
-    @ApiOperation("获取近六年污染物平均值")
-    public R getSixAverage(){
-        List<Double[]> list = pollutionService.getSixAverage();
-        return R.ok(list);
-    }
-
-    // 获取当前年份、省份的城市污染物数据前十名
-    @GetMapping("get_ten_city_aqi_asc/{name}")
-    @ApiOperation("获取近六年某省份的前十名城市污染物数据")
-    public R getTenCityAsc(@PathVariable String name){
-        List<Map<String,Object>> map = pollutionService.getTenCityAsc(name);
-        return R.ok(map);
-    }
-
-    // 获取近六年某省份的污染物平均数据
-    @GetMapping("get_six_average_province/{name}")
-    @ApiOperation("获取近六年某省份的污染物平均数据")
-    public R getSixAverageByProvince(@PathVariable String name){
-        List<Double[]> list = pollutionService.getSixAverageByProvince(name);
-        return R.ok(list);
-    }
 
 
 
