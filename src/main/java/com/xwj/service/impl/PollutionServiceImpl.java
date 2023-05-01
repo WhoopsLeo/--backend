@@ -129,11 +129,48 @@ public class    PollutionServiceImpl implements PollutionService {
         return cityInfos;
     }
 
+    /*
+     *  获取近六年的污染物平均值
+     * */
     @Override
     public Map<String, Object> getSomeAvgCount() {
-        return null;
-    }
+        Pollution info_2013 = pollutionMapper.selectAvgCount2013();
+        Pollution info_2014 = pollutionMapper.selectAvgCount2014();
+        Pollution info_2015 = pollutionMapper.selectAvgCount2015();
+        Pollution info_2016 = pollutionMapper.selectAvgCount2016();
+        Pollution info_2017 = pollutionMapper.selectAvgCount2017();
+        Pollution info_2018 = pollutionMapper.selectAvgCount2018();
+        // 先放进一个集合进行处理
+        // 获取各个平均值
 
+        // 定义平均值集合 aqi、temp、psfc、rh
+        Double[] aqiArr = new Double[6];
+        Double[] tempArr = new Double[6];
+        Double[] psfcArr = new Double[6];
+        Double[] rhArr = new Double[6];
+
+        List<Pollution> infoList = Arrays.asList(info_2013,info_2014,info_2015,info_2016,info_2017,info_2018);
+        infoList.stream().map(info ->{
+            info.setAqi(countUtils.getAQI(info));
+            return info;
+        }).collect(Collectors.toList());
+        for (int i = 0;i < infoList.size();i++){
+            // 统一计算aqi
+            aqiArr[i] = countUtils.getAQI(infoList.get(i));
+
+            tempArr[i] = Double.parseDouble(String.format("%.2f",infoList.get(i).getTemp()));
+            psfcArr[i] = Double.parseDouble(String.format("%.2f", infoList.get(i).getPsfc()));
+            rhArr[i] = Double.parseDouble(String.format("%.2f", infoList.get(i).getRh()));
+        }
+
+        // 组装Map 并返回
+        Map<String,Object> map = new HashMap<>();
+        map.put("aqi",aqiArr);
+        map.put("temp",tempArr);
+        map.put("psfc",psfcArr);
+        map.put("rh",rhArr);
+        return map;
+    }
     @Override
     public List<Map<String, Object>> getTenProvinceAsc() {
         // 处理2013年
@@ -365,11 +402,55 @@ public class    PollutionServiceImpl implements PollutionService {
         return list;
     }
 
+    /*
+     *  获取六年污染物平均值
+     * */
     @Override
     public List<Double[]> getSixAverage() {
-        return null;
-    }
+        // 获取2013年所有污染物
+        Pollution info_2013 = pollutionMapper.selectAvgCount2013();
+        // 获取2014年所有污染物
+        Pollution info_2014 = pollutionMapper.selectAvgCount2014();
+        // 获取2013年所有污染物
+        Pollution info_2015 = pollutionMapper.selectAvgCount2015();
+        // 获取2013年所有污染物
+        Pollution info_2016 = pollutionMapper.selectAvgCount2016();
+        // 获取2013年所有污染物
+        Pollution info_2017 = pollutionMapper.selectAvgCount2017();
+        // 获取2013年所有污染物
+        Pollution info_2018 = pollutionMapper.selectAvgCount2018();
 
+        List<Pollution> infos = Arrays.asList(info_2013, info_2014, info_2015, info_2016, info_2017, info_2018);
+
+        // 开始组装
+        List<Double[]> list = new LinkedList<>();
+        // PM2.5数组
+        Double[] pm2Arr = new Double[6];
+        Double[] pm10Arr = new Double[6];
+        Double[] so2Arr = new Double[6];
+        Double[] no2Arr = new Double[6];
+        Double[] coArr = new Double[6];
+        Double[] o3Arr = new Double[6];
+
+        for (int j = 0; j < infos.size(); j++) {
+            pm2Arr[j] = Double.parseDouble(String.format("%.2f", infos.get(j).getPm2()));
+            pm10Arr[j] = Double.parseDouble(String.format("%.2f", infos.get(j).getPm10()));
+            so2Arr[j] = Double.parseDouble(String.format("%.2f", infos.get(j).getSo2()));
+            no2Arr[j] = Double.parseDouble(String.format("%.2f", infos.get(j).getNo2()));
+            coArr[j] = Double.parseDouble(String.format("%.2f", infos.get(j).getCo()));
+            o3Arr[j] = Double.parseDouble(String.format("%.2f", infos.get(j).getO3()));
+        }
+
+
+        list.add(pm2Arr);
+        list.add(pm10Arr);
+        list.add(so2Arr);
+        list.add(no2Arr);
+        list.add(coArr);
+        list.add(o3Arr);
+
+        return list;
+    }
     @Override
     public List<Map<String, Object>> getInfoByYear(String year) {
         return null;

@@ -44,6 +44,13 @@ public class PollutionController {
         return R.ok(cityInfoByProvince);
     }
 
+    @GetMapping("get_some_average")
+    @ApiOperation("获取近六年省份污染物平均值")
+    public R getSomeAvgCount(){
+        Map<String,Object> countMap  = pollutionService.getSomeAvgCount();
+        return R.ok(countMap);
+    }
+
     @GetMapping("get_some_city_average/{name}")
     @ApiOperation("获取目标年城市污染物平均值")
     public R getSomeCityAvgCount(@PathVariable String name){
@@ -57,6 +64,14 @@ public class PollutionController {
     public R getTenProvinceAsc(){
         List<Map<String,Object>> map = pollutionService.getTenProvinceAsc();
         return R.ok(map);
+    }
+
+    // 获取六年污染物平均值
+    @GetMapping("get_six_average")
+    @ApiOperation("获取近六年污染物平均值")
+    public R getSixAverage(){
+        List<Double[]> list = pollutionService.getSixAverage();
+        return R.ok(list);
     }
 
 
