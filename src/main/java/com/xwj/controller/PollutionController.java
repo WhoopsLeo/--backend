@@ -75,7 +75,20 @@ public class PollutionController {
     }
 
 
+    // 获取当前年份、省份的城市污染物数据前十名
+    @GetMapping("get_ten_city_aqi_asc/{name}")
+    @ApiOperation("获取近六年某省份的前十名城市污染物数据")
+    public R getTenCityAsc(@PathVariable String name){
+        List<Map<String,Object>> map = pollutionService.getTenCityAsc(name);
+        return R.ok(map);
+    }
 
-
+    // 获取近六年某省份的污染物平均数据
+    @GetMapping("get_six_average_province/{name}")
+    @ApiOperation("获取近六年某省份的污染物平均数据")
+    public R getSixAverageByProvince(@PathVariable String name){
+        List<Double[]> list = pollutionService.getSixAverageByProvince(name);
+        return R.ok(list);
+    }
 
 }
