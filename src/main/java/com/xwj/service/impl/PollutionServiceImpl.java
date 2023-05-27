@@ -12,7 +12,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
-public class    PollutionServiceImpl implements PollutionService {
+public class PollutionServiceImpl implements PollutionService {
 
     @Autowired
     private PollutionMapper pollutionMapper;
@@ -24,8 +24,8 @@ public class    PollutionServiceImpl implements PollutionService {
     private PollutionUtils pollutionUtils;
 
     /*
-    *  获取所有省份平均污染水平
-    * */
+     *  获取所有省份平均污染水平
+     * */
     @Override
     public List<Map<String, Object>> getAllProvincePollutions() {
         // 开始进行业务处理
@@ -33,16 +33,16 @@ public class    PollutionServiceImpl implements PollutionService {
 
         List<Pollution> pollution = pollutionMapper.selectAvgPollutionGroupByProvince();
 
-        List<Map<String,Object>> pollutions = new ArrayList<>();
+        List<Map<String, Object>> pollutions = new ArrayList<>();
 
-        pollution.forEach(v ->{
+        pollution.forEach(v -> {
             Map<String, Object> map = new LinkedHashMap<>();
             // 计算aqi
             // double aqi = getAQI();
             //double aqi = 55.5;
             Double aqi = countUtils.getAQI(v);
 
-            map.put("name",v.getProvince());
+            map.put("name", v.getProvince());
             List<Double> doubles = new LinkedList<>();
             // 保留两位小数
             doubles.add(v.getLon());
@@ -57,7 +57,7 @@ public class    PollutionServiceImpl implements PollutionService {
 
             // 格式化doubles
             Double[] formatData = countUtils.formatData(doubles);
-            map.put("value",formatData);
+            map.put("value", formatData);
 
             // 放入集合
             pollutions.add(map);
@@ -66,13 +66,20 @@ public class    PollutionServiceImpl implements PollutionService {
     }
 
     /*
-    *  根据省份名称以及年份获取数据
-    * */
+     *  根据省份名称以及年份获取数据
+     * */
     @Override
-    public List<Map<String, Object>> getCityInfoByProvince(String year,String name) {
+    public List<Map<String, Object>> getCityInfoByProvince(String year, String name) {
+        if (year == null || "".equals(year)) {
+            return null;
+        }
+
+        if (name == null || "".equals(name)) {
+            return null;
+        }
         // 判断year 为哪一年也就是查询哪张表
         List<Pollution> list = null;
-        switch (year){
+        switch (year) {
             case "2013":
                 list = pollutionMapper.selectCityByName2013(name);
                 break;
@@ -96,16 +103,16 @@ public class    PollutionServiceImpl implements PollutionService {
                 break;
         }
 
-        List<Map<String,Object>> cityInfos = new ArrayList<>();
+        List<Map<String, Object>> cityInfos = new ArrayList<>();
 
-        list.forEach(v->{
+        list.forEach(v -> {
             Map<String, Object> map = new LinkedHashMap<>();
             // 计算aqi
             // double aqi = getAQI();
             //double aqi = 55.5;
             Double aqi = countUtils.getAQI(v);
 
-            map.put("name",v.getCity());
+            map.put("name", v.getCity());
             List<Double> doubles = new LinkedList<>();
             // 保留两位小数
             doubles.add(v.getLon());
@@ -120,7 +127,7 @@ public class    PollutionServiceImpl implements PollutionService {
 
             // 格式化doubles
             Double[] formatData = countUtils.formatData(doubles);
-            map.put("value",formatData);
+            map.put("value", formatData);
 
             // 放入集合
             cityInfos.add(map);
@@ -149,28 +156,32 @@ public class    PollutionServiceImpl implements PollutionService {
         Double[] psfcArr = new Double[6];
         Double[] rhArr = new Double[6];
 
-        List<Pollution> infoList = Arrays.asList(info_2013,info_2014,info_2015,info_2016,info_2017,info_2018);
-        infoList.stream().map(info ->{
+        List<Pollution> infoList = Arrays.asList(info_2013, info_2014, info_2015, info_2016, info_2017, info_2018);
+        infoList.stream().map(info -> {
             info.setAqi(countUtils.getAQI(info));
             return info;
         }).collect(Collectors.toList());
-        for (int i = 0;i < infoList.size();i++){
+        for (int i = 0; i < infoList.size(); i++) {
             // 统一计算aqi
             aqiArr[i] = countUtils.getAQI(infoList.get(i));
 
-            tempArr[i] = Double.parseDouble(String.format("%.2f",infoList.get(i).getTemp()));
+            tempArr[i] = Double.parseDouble(String.format("%.2f", infoList.get(i).getTemp()));
             psfcArr[i] = Double.parseDouble(String.format("%.2f", infoList.get(i).getPsfc()));
             rhArr[i] = Double.parseDouble(String.format("%.2f", infoList.get(i).getRh()));
         }
 
         // 组装Map 并返回
-        Map<String,Object> map = new HashMap<>();
-        map.put("aqi",aqiArr);
-        map.put("temp",tempArr);
-        map.put("psfc",psfcArr);
-        map.put("rh",rhArr);
+        Map<String, Object> map = new HashMap<>();
+        map.put("aqi", aqiArr);
+        map.put("temp", tempArr);
+        map.put("psfc", psfcArr);
+        map.put("rh", rhArr);
         return map;
     }
+
+    /*
+     *  获取近六年的前十名身份的aqi、no2等污染物
+     * */
     @Override
     public List<Map<String, Object>> getTenProvinceAsc() {
         // 处理2013年
@@ -314,80 +325,80 @@ public class    PollutionServiceImpl implements PollutionService {
         }
 
         // 组装完毕开始返回
-        List<Map<String,Object>> list = new ArrayList<>();
+        List<Map<String, Object>> list = new ArrayList<>();
         // 创建集合组装返回数据
         // 组装每一年前十名的省市名称
-        Map<String,Object> provinceData = new HashMap<>();
-        provinceData.put("2018",province_2018);
-        provinceData.put("2017",province_2017);
-        provinceData.put("2016",province_2016);
-        provinceData.put("2015",province_2015);
-        provinceData.put("2014",province_2014);
-        provinceData.put("2013",province_2013);
+        Map<String, Object> provinceData = new HashMap<>();
+        provinceData.put("2018", province_2018);
+        provinceData.put("2017", province_2017);
+        provinceData.put("2016", province_2016);
+        provinceData.put("2015", province_2015);
+        provinceData.put("2014", province_2014);
+        provinceData.put("2013", province_2013);
 
 
         // 组装返回api
-        Map<String,Object> aqiData = new HashMap<>();
-        aqiData.put("2018",aqi_2018);
-        aqiData.put("2017",aqi_2017);
-        aqiData.put("2016",aqi_2016);
-        aqiData.put("2015",aqi_2015);
-        aqiData.put("2014",aqi_2014);
-        aqiData.put("2013",aqi_2013);
+        Map<String, Object> aqiData = new HashMap<>();
+        aqiData.put("2018", aqi_2018);
+        aqiData.put("2017", aqi_2017);
+        aqiData.put("2016", aqi_2016);
+        aqiData.put("2015", aqi_2015);
+        aqiData.put("2014", aqi_2014);
+        aqiData.put("2013", aqi_2013);
 
         // 组装返回pm2
-        Map<String,Object> pm2Data = new HashMap<>();
-        pm2Data.put("2018",pm2_2018);
-        pm2Data.put("2017",pm2_2017);
-        pm2Data.put("2016",pm2_2016);
-        pm2Data.put("2015",pm2_2015);
-        pm2Data.put("2014",pm2_2014);
-        pm2Data.put("2013",pm2_2013);
+        Map<String, Object> pm2Data = new HashMap<>();
+        pm2Data.put("2018", pm2_2018);
+        pm2Data.put("2017", pm2_2017);
+        pm2Data.put("2016", pm2_2016);
+        pm2Data.put("2015", pm2_2015);
+        pm2Data.put("2014", pm2_2014);
+        pm2Data.put("2013", pm2_2013);
 
         // 组装返回pm10
-        Map<String,Object> pm10Data = new HashMap<>();
-        pm10Data.put("2018",pm10_2018);
-        pm10Data.put("2017",pm10_2017);
-        pm10Data.put("2016",pm10_2016);
-        pm10Data.put("2015",pm10_2015);
-        pm10Data.put("2014",pm10_2014);
-        pm10Data.put("2013",pm10_2013);
+        Map<String, Object> pm10Data = new HashMap<>();
+        pm10Data.put("2018", pm10_2018);
+        pm10Data.put("2017", pm10_2017);
+        pm10Data.put("2016", pm10_2016);
+        pm10Data.put("2015", pm10_2015);
+        pm10Data.put("2014", pm10_2014);
+        pm10Data.put("2013", pm10_2013);
 
         // 组装返回no2
-        Map<String,Object> no2Data = new HashMap<>();
-        no2Data.put("2018",no2_2018);
-        no2Data.put("2017",no2_2017);
-        no2Data.put("2016",no2_2016);
-        no2Data.put("2015",no2_2015);
-        no2Data.put("2014",no2_2014);
-        no2Data.put("2013",no2_2013);
+        Map<String, Object> no2Data = new HashMap<>();
+        no2Data.put("2018", no2_2018);
+        no2Data.put("2017", no2_2017);
+        no2Data.put("2016", no2_2016);
+        no2Data.put("2015", no2_2015);
+        no2Data.put("2014", no2_2014);
+        no2Data.put("2013", no2_2013);
 
         // 组装返回so2
-        Map<String,Object> so2Data = new HashMap<>();
-        so2Data.put("2018",so2_2018);
-        so2Data.put("2017",so2_2017);
-        so2Data.put("2016",so2_2016);
-        so2Data.put("2015",so2_2015);
-        so2Data.put("2014",so2_2014);
-        so2Data.put("2013",so2_2013);
+        Map<String, Object> so2Data = new HashMap<>();
+        so2Data.put("2018", so2_2018);
+        so2Data.put("2017", so2_2017);
+        so2Data.put("2016", so2_2016);
+        so2Data.put("2015", so2_2015);
+        so2Data.put("2014", so2_2014);
+        so2Data.put("2013", so2_2013);
 
         // 组装返回co
-        Map<String,Object> coData = new HashMap<>();
-        coData.put("2018",co_2018);
-        coData.put("2017",co_2017);
-        coData.put("2016",co_2016);
-        coData.put("2015",co_2015);
-        coData.put("2014",co_2014);
-        coData.put("2013",co_2013);
+        Map<String, Object> coData = new HashMap<>();
+        coData.put("2018", co_2018);
+        coData.put("2017", co_2017);
+        coData.put("2016", co_2016);
+        coData.put("2015", co_2015);
+        coData.put("2014", co_2014);
+        coData.put("2013", co_2013);
 
         // 组装返回o3
-        Map<String,Object> o3Data = new HashMap<>();
-        o3Data.put("2018",o3_2018);
-        o3Data.put("2017",o3_2017);
-        o3Data.put("2016",o3_2016);
-        o3Data.put("2015",o3_2015);
-        o3Data.put("2014",o3_2014);
-        o3Data.put("2013",o3_2013);
+        Map<String, Object> o3Data = new HashMap<>();
+        o3Data.put("2018", o3_2018);
+        o3Data.put("2017", o3_2017);
+        o3Data.put("2016", o3_2016);
+        o3Data.put("2015", o3_2015);
+        o3Data.put("2014", o3_2014);
+        o3Data.put("2013", o3_2013);
 
         //放入返回集合并返回
         list.add(provinceData);
@@ -401,6 +412,7 @@ public class    PollutionServiceImpl implements PollutionService {
 
         return list;
     }
+
 
     /*
      *  获取六年污染物平均值
@@ -451,15 +463,88 @@ public class    PollutionServiceImpl implements PollutionService {
 
         return list;
     }
+
+    /*
+     *  根据年份获取信息
+     * */
     @Override
     public List<Map<String, Object>> getInfoByYear(String year) {
-        return null;
+
+        if (year == null || year.equals("")) {
+            return null;
+        }
+
+        List<String> years = new ArrayList<>(Arrays.asList("2013", "2014", "2015", "2016", "2017", "2018"));
+
+        if (!years.contains(year)) {
+            return null;
+        }
+
+        // 判断是哪一年
+        List<Pollution> list = null;
+        switch (year) {
+            case "2013":
+                list = pollutionMapper.selectAvgCount2013GroupByProvince();
+                break;
+            case "2014":
+                list = pollutionMapper.selectAvgCount2014GroupByProvince();
+                break;
+            case "2015":
+                list = pollutionMapper.selectAvgCount2015GroupByProvince();
+                break;
+            case "2016":
+                list = pollutionMapper.selectAvgCount2016GroupByProvince();
+                break;
+            case "2017":
+                list = pollutionMapper.selectAvgCount2017GroupByProvince();
+                break;
+            case "2018":
+                list = pollutionMapper.selectAvgCount2018GroupByProvince();
+                break;
+            default:
+                list = new ArrayList<>();
+                break;
+        }
+
+        List<Map<String, Object>> pollutions = new ArrayList<>();
+
+        list.forEach(v -> {
+            Map<String, Object> map = new LinkedHashMap<>();
+            // 计算aqi
+            // double aqi = getAQI();
+            //double aqi = 55.5;
+            Double aqi = countUtils.getAQI(v);
+
+            map.put("name", v.getProvince());
+            List<Double> doubles = new LinkedList<>();
+            // 保留两位小数
+            doubles.add(v.getLon());
+            doubles.add(v.getLat());
+            doubles.add(aqi);
+            doubles.add(v.getPm2());
+            doubles.add(v.getPm10());
+            doubles.add(v.getSo2());
+            doubles.add(v.getNo2());
+            doubles.add(v.getCo());
+            doubles.add(v.getO3());
+
+            // 格式化doubles
+            Double[] formatData = countUtils.formatData(doubles);
+            map.put("value", formatData);
+
+            // 放入集合
+            pollutions.add(map);
+        });
+        return pollutions;
     }
 
+    /*
+     *  获取某城市近六年的压强、温度、湿度
+     * */
     @Override
     public Map<String, Object> getSomeCityAvgCount(String name) {
 
-        if ("china".equals(name)){
+        if ("china".equals(name)) {
             return getSomeAvgCount();
         }
 
@@ -478,36 +563,49 @@ public class    PollutionServiceImpl implements PollutionService {
         Double[] psfcArr = new Double[6];
         Double[] rhArr = new Double[6];
 
-        List<Pollution> infoList = Arrays.asList(info_2013,info_2014,info_2015,info_2016,info_2017,info_2018);
-        infoList.stream().map(info ->{
+        List<Pollution> infoList = Arrays.asList(info_2013, info_2014, info_2015, info_2016, info_2017, info_2018);
+        infoList.stream().map(info -> {
             info.setAqi(countUtils.getAQI(info));
             return info;
         }).collect(Collectors.toList());
-        for (int i = 0;i < infoList.size();i++){
+        for (int i = 0; i < infoList.size(); i++) {
             // 统一计算aqi
             aqiArr[i] = countUtils.getAQI(infoList.get(i));
 
-            tempArr[i] = Double.parseDouble(String.format("%.2f",infoList.get(i).getTemp()));
+            tempArr[i] = Double.parseDouble(String.format("%.2f", infoList.get(i).getTemp()));
             psfcArr[i] = Double.parseDouble(String.format("%.2f", infoList.get(i).getPsfc()));
             rhArr[i] = Double.parseDouble(String.format("%.2f", infoList.get(i).getRh()));
         }
 
         // 组装Map 并返回
-        Map<String,Object> map = new HashMap<>();
-        map.put("aqi",aqiArr);
-        map.put("temp",tempArr);
-        map.put("psfc",psfcArr);
-        map.put("rh",rhArr);
+        Map<String, Object> map = new HashMap<>();
+        map.put("aqi", aqiArr);
+        map.put("temp", tempArr);
+        map.put("psfc", psfcArr);
+        map.put("rh", rhArr);
         return map;
     }
 
+
     /*
-     *   // 获取当前年份、省份的城市污染物数据前十名
+     *   获取当前年份、省份的城市污染物数据前十名
      * */
     @Override
     public List<Map<String, Object>> getTenCityAsc(String name) {
 
-        if ("china".equals(name)){
+        if (name == null || "".equals(name)) {
+            return null;
+        }
+
+        List<String> chinaProvince = new ArrayList<>(Arrays.asList("河北省", "山西省", "黑龙江省", "吉林省", "辽宁省", "江苏省", "浙江省", "安徽省", "福建省", "江西省", "山东省", "河南省", "湖北省", "湖南省",
+                "广东省", "海南省", "四川省", "贵州省", "云南省", "陕西省", "甘肃省", "青海省", "台湾省", "内蒙古自治区", "广西壮族自治区", "西藏自治区", "宁夏回族自治区", "新疆维吾尔自治区", "北京市", "天津市", "上海市", "重庆市", "香港特别行政区", "澳门特别行政区"));
+
+        if (!chinaProvince.contains(name)){
+            return null;
+        }
+
+
+        if ("china".equals(name)) {
             return getTenProvinceAsc();
         }
 
@@ -660,80 +758,80 @@ public class    PollutionServiceImpl implements PollutionService {
         }
 
         // 组装完毕开始返回
-        List<Map<String,Object>> list = new ArrayList<>();
+        List<Map<String, Object>> list = new ArrayList<>();
         // 创建集合组装返回数据
         // 组装每一年前十名的省市名称
-        Map<String,Object> provinceData = new HashMap<>();
-        provinceData.put("2018",province_2018);
-        provinceData.put("2017",province_2017);
-        provinceData.put("2016",province_2016);
-        provinceData.put("2015",province_2015);
-        provinceData.put("2014",province_2014);
-        provinceData.put("2013",province_2013);
+        Map<String, Object> provinceData = new HashMap<>();
+        provinceData.put("2018", province_2018);
+        provinceData.put("2017", province_2017);
+        provinceData.put("2016", province_2016);
+        provinceData.put("2015", province_2015);
+        provinceData.put("2014", province_2014);
+        provinceData.put("2013", province_2013);
 
 
         // 组装返回api
-        Map<String,Object> aqiData = new HashMap<>();
-        aqiData.put("2018",aqi_2018);
-        aqiData.put("2017",aqi_2017);
-        aqiData.put("2016",aqi_2016);
-        aqiData.put("2015",aqi_2015);
-        aqiData.put("2014",aqi_2014);
-        aqiData.put("2013",aqi_2013);
+        Map<String, Object> aqiData = new HashMap<>();
+        aqiData.put("2018", aqi_2018);
+        aqiData.put("2017", aqi_2017);
+        aqiData.put("2016", aqi_2016);
+        aqiData.put("2015", aqi_2015);
+        aqiData.put("2014", aqi_2014);
+        aqiData.put("2013", aqi_2013);
 
         // 组装返回pm2
-        Map<String,Object> pm2Data = new HashMap<>();
-        pm2Data.put("2018",pm2_2018);
-        pm2Data.put("2017",pm2_2017);
-        pm2Data.put("2016",pm2_2016);
-        pm2Data.put("2015",pm2_2015);
-        pm2Data.put("2014",pm2_2014);
-        pm2Data.put("2013",pm2_2013);
+        Map<String, Object> pm2Data = new HashMap<>();
+        pm2Data.put("2018", pm2_2018);
+        pm2Data.put("2017", pm2_2017);
+        pm2Data.put("2016", pm2_2016);
+        pm2Data.put("2015", pm2_2015);
+        pm2Data.put("2014", pm2_2014);
+        pm2Data.put("2013", pm2_2013);
 
         // 组装返回pm10
-        Map<String,Object> pm10Data = new HashMap<>();
-        pm10Data.put("2018",pm10_2018);
-        pm10Data.put("2017",pm10_2017);
-        pm10Data.put("2016",pm10_2016);
-        pm10Data.put("2015",pm10_2015);
-        pm10Data.put("2014",pm10_2014);
-        pm10Data.put("2013",pm10_2013);
+        Map<String, Object> pm10Data = new HashMap<>();
+        pm10Data.put("2018", pm10_2018);
+        pm10Data.put("2017", pm10_2017);
+        pm10Data.put("2016", pm10_2016);
+        pm10Data.put("2015", pm10_2015);
+        pm10Data.put("2014", pm10_2014);
+        pm10Data.put("2013", pm10_2013);
 
         // 组装返回no2
-        Map<String,Object> no2Data = new HashMap<>();
-        no2Data.put("2018",no2_2018);
-        no2Data.put("2017",no2_2017);
-        no2Data.put("2016",no2_2016);
-        no2Data.put("2015",no2_2015);
-        no2Data.put("2014",no2_2014);
-        no2Data.put("2013",no2_2013);
+        Map<String, Object> no2Data = new HashMap<>();
+        no2Data.put("2018", no2_2018);
+        no2Data.put("2017", no2_2017);
+        no2Data.put("2016", no2_2016);
+        no2Data.put("2015", no2_2015);
+        no2Data.put("2014", no2_2014);
+        no2Data.put("2013", no2_2013);
 
         // 组装返回so2
-        Map<String,Object> so2Data = new HashMap<>();
-        so2Data.put("2018",so2_2018);
-        so2Data.put("2017",so2_2017);
-        so2Data.put("2016",so2_2016);
-        so2Data.put("2015",so2_2015);
-        so2Data.put("2014",so2_2014);
-        so2Data.put("2013",so2_2013);
+        Map<String, Object> so2Data = new HashMap<>();
+        so2Data.put("2018", so2_2018);
+        so2Data.put("2017", so2_2017);
+        so2Data.put("2016", so2_2016);
+        so2Data.put("2015", so2_2015);
+        so2Data.put("2014", so2_2014);
+        so2Data.put("2013", so2_2013);
 
         // 组装返回co
-        Map<String,Object> coData = new HashMap<>();
-        coData.put("2018",co_2018);
-        coData.put("2017",co_2017);
-        coData.put("2016",co_2016);
-        coData.put("2015",co_2015);
-        coData.put("2014",co_2014);
-        coData.put("2013",co_2013);
+        Map<String, Object> coData = new HashMap<>();
+        coData.put("2018", co_2018);
+        coData.put("2017", co_2017);
+        coData.put("2016", co_2016);
+        coData.put("2015", co_2015);
+        coData.put("2014", co_2014);
+        coData.put("2013", co_2013);
 
         // 组装返回o3
-        Map<String,Object> o3Data = new HashMap<>();
-        o3Data.put("2018",o3_2018);
-        o3Data.put("2017",o3_2017);
-        o3Data.put("2016",o3_2016);
-        o3Data.put("2015",o3_2015);
-        o3Data.put("2014",o3_2014);
-        o3Data.put("2013",o3_2013);
+        Map<String, Object> o3Data = new HashMap<>();
+        o3Data.put("2018", o3_2018);
+        o3Data.put("2017", o3_2017);
+        o3Data.put("2016", o3_2016);
+        o3Data.put("2015", o3_2015);
+        o3Data.put("2014", o3_2014);
+        o3Data.put("2013", o3_2013);
 
         //放入返回集合并返回
         list.add(provinceData);
@@ -748,13 +846,14 @@ public class    PollutionServiceImpl implements PollutionService {
         return list;
     }
 
+
     /*
      * 获取某省近六年的污染物平均值
      * */
     @Override
     public List<Double[]> getSixAverageByProvince(String name) {
 
-        if ("china".equals(name)){
+        if ("china".equals(name)) {
             return getSixAverage();
         }
 

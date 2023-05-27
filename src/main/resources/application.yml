@@ -43,6 +43,6 @@ spring:
 mybatis:
   configuration:
     map-underscore-to-camel-case: true
-  type-aliases-package: com.lx.pojo #mybatis 别名
+  type-aliases-package: com.xwj.pojo #mybatis 别名
 server:
   port: 9099
