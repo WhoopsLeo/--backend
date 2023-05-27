@@ -32,7 +32,7 @@ public class JunitTest {
     private PollutionService pollutionService;
 
     /**
-     * 测试获取所有省份平均污染水平
+     * 测试获取所有省份六年各污染物平均值
      */
     @Test
     public void getAllProvincePollutionsTest() {

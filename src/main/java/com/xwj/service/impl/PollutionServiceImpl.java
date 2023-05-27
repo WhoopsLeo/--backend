@@ -539,7 +539,7 @@ public class PollutionServiceImpl implements PollutionService {
     }
 
     /*
-     *  获取某城市近六年的压强、温度、湿度
+     *  获取某城市近六年的压强、温度、湿度、AQI
      * */
     @Override
     public Map<String, Object> getSomeCityAvgCount(String name) {
